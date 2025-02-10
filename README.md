@@ -1,0 +1,1 @@
+Imposto le API per gestire i contatti, permettendo creazione, lettura, aggiornamento e cancellazione dei contatti nel db.
