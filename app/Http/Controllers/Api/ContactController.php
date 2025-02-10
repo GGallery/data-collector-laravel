@@ -16,6 +16,8 @@ class ContactController extends Controller
         return Contact::all();
     }
 
+    // 
+
     /**
      * Store a newly created resource in storage.
      */
