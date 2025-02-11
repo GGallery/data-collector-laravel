@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ContactResource;
 use App\Models\Contact;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ContactController extends Controller
 {
@@ -13,7 +15,7 @@ class ContactController extends Controller
      */
     public function index()
     {
-        return Contact::all();
+        return ContactResource::collection(Contact::all());
     }
 
     // 
@@ -23,8 +25,19 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
-        $contact = Contact::create($request->all());
-        return response()->json($contact, 201);
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:contacts',
+            'phone' => 'nullable|string|max:20',
+            'message' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+        $contact = Contact::create($validator->validated());
+        return new ContactResource($contact);
     }
 
     /**
@@ -32,7 +45,13 @@ class ContactController extends Controller
      */
     public function show(string $id)
     {
-        return Contact::findOrFail($id);
+        $contact = Contact::find($id);
+
+        if (!$contact) {
+            return response()->json(['message' => 'Contact not found'], 404);
+        }
+
+        return new ContactResource($contact);
     }
 
     /**
@@ -40,9 +59,25 @@ class ContactController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $contact = Contact::findOrFail($id);
-        $contact->update($request->all());
-        return response()->json($contact, 200);
+        $contact = Contact::find($id);
+
+        if (!$contact) {
+            return response()->json(['message' => 'Contact not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|string|email|max:255|unique:contacts,email,' . $id,
+            'phone' => 'nullable|string|max:20',
+            'message' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+        $contact->update($validator->validated());
+        return new ContactResource($contact);
     }
 
     /**
@@ -50,7 +85,13 @@ class ContactController extends Controller
      */
     public function destroy(string $id)
     {
-        Contact::destroy($id);
+        $contact = Contact::find($id);
+
+        if (!$contact) {
+            return response()->json(['message' => 'Contact not found'], 404);
+        }
+
+        $contact->delete();
         return response()->json(null, 204);
     }
 }
