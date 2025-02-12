@@ -3,25 +3,25 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\ApiToken;
+use App\Models\ApiTokenPrefix;
 use Illuminate\Support\Str;
 
 
-class GenerateApiToken extends Command
+class GenerateApiTokenPrefix extends Command
 {
-    protected $signature = 'generate:api-token {platform_name}';
+    protected $signature = 'generate:api-token-prefix {platform_name}';
     protected $description = 'Generate an API token for a platform';
 
     public function handle()
     {
         $platformName = $this->argument('platform_name');
-        $token = Str::random(10);
+        $prefixToken = Str::random(10);
 
-        ApiToken::create([
+        ApiTokenPrefix::create([
             'platform_name' => $platformName,
-            'token' => $token,
+            'prefix_token' => $prefixToken,
         ]);
 
-        $this->info("API token for {$platformName}: {$token}");
+        $this->info("API token for {$platformName}: {$prefixToken}");
     }
 }

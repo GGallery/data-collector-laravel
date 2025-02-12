@@ -4,13 +4,13 @@
 app
 └ Console
   └ Commands
-    └ GenerateApiToken.php
+    └ GenerateApiTokenPrefix.php
   └ Http
     └  Controllers
       └ Api 
         └ ContactController.php
     └  Middleware
-      └  AuthenticateWithToken.php
+      └  AuthenticateWithPrefixToken.php
     └  Resource
       └  ContactResource.php
 └ bootstrap
@@ -18,12 +18,12 @@ app
 └ database
   └ migrations
     └ create_contacts.php
-    └ create_api_tokens_table.php
+    └ create_api_tokens_prefixes_table.php
 └ routes
   └ api.php
 ```
 
-## Comandi non comuni
+## Comandi da tenere a mente
 
 php artisan make:resource ContactResource
 
@@ -32,8 +32,8 @@ php artisan make:controller Api\ContactController --api
 php artisan install:api per Laravel 11 <br><br>
 
 
-php artisan make:command GenerateApiToken
+php artisan make:command GenerateApiTokenPrefix (mv app/Console/Commands/GenerateApiToken.php app/Console/Commands/GenerateApiTokenPrefix.php)
 
-php artisan make:middleware AuthenticateWithToken
+php artisan make:middleware AuthenticateWithPrefixToken
 
-php artisan generate:api-token "PlatformName" (generato da make:command)
+php artisan generate:api-token-prefix "PlatformName" (generato da make:command)

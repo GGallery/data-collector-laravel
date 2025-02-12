@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ApiToken extends Model
+class ApiTokenPrefix extends Model
 {
+    protected $table = 'api_tokens_prefixes';
     protected $fillable = [
         'platform_name',
-        'token',
+        'prefix_token',
     ];
 }

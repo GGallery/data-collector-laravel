@@ -5,9 +5,9 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Models\ApiToken;
+use App\Models\ApiTokenPrefix;
 
-class AuthenticateWithToken
+class AuthenticateWithPrefixToken
 {
     /**
      * Handle an incoming request.
@@ -16,18 +16,18 @@ class AuthenticateWithToken
      */
     public function handle(Request $request, Closure $next)
     {
-        $token = $request->bearerToken();
-        // dd($token);
+        $prefixToken = $request->bearerToken();
+        // dd($prefixToken);
 
-        if (!$token || !ApiToken::where('token', $token)->exists()) {
+        if (!$prefixToken || !ApiTokenPrefix::where('prefix_token', $prefixToken)->exists()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
         // Passa la richiesta al prossimo middleware o controller
         $response = $next($request);
 
-        // Aggiungi un header personalizzato alla risposta
-        $response->headers->set('Authorization', 'Bearer ' . $token);
+        // Aggiunge un header personalizzato alla risposta
+        $response->headers->set('Authorization', 'Bearer ' . $prefixToken);
 
         return $response;
     }
