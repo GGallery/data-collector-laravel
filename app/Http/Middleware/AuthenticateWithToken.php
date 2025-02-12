@@ -17,11 +17,18 @@ class AuthenticateWithToken
     public function handle(Request $request, Closure $next)
     {
         $token = $request->bearerToken();
+        // dd($token);
 
-        if (!$token || !ApiToken::where('token', hash('sha256', $token))->exists()) {
+        if (!$token || !ApiToken::where('token', $token)->exists()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        return $next($request);
+        // Passa la richiesta al prossimo middleware o controller
+        $response = $next($request);
+
+        // Aggiungi un header personalizzato alla risposta
+        $response->headers->set('Authorization', 'Bearer ' . $token);
+
+        return $response;
     }
 }

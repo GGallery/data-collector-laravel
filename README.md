@@ -10,7 +10,7 @@ app
       └ Api 
         └ ContactController.php
     └  Middleware
-      └  AuthenticateWithToken
+      └  AuthenticateWithToken.php
     └  Resource
       └  ContactResource.php
 └ bootstrap

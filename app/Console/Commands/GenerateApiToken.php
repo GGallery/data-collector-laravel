@@ -15,11 +15,11 @@ class GenerateApiToken extends Command
     public function handle()
     {
         $platformName = $this->argument('platform_name');
-        $token = Str::random(60);
+        $token = Str::random(10);
 
         ApiToken::create([
             'platform_name' => $platformName,
-            'token' => hash('sha256', $token),
+            'token' => $token,
         ]);
 
         $this->info("API token for {$platformName}: {$token}");
