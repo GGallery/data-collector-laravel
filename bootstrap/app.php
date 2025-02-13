@@ -23,6 +23,6 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withCommands([
-        \App\Console\Commands\GenerateApiTokenPrefix::class,
+        \App\Console\Commands\GenerateApiToken::class,
     ])
     ->create();
