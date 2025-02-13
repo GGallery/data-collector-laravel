@@ -18,19 +18,18 @@ class GenerateApiToken extends Command
         $platform_name = $this->argument('platform_name');
         $prefix_token = Str::random(10);
 
-        // Ottiene l'orario corrente dal database mysql
-        $current_time = DB::selectOne('SELECT NOW() AS current_time')->current_time;
-
+        // Ottiene l'orario corrente dal database mysql in formato Unix
+        $current_time = DB::selectOne('SELECT UNIX_TIMESTAMP(NOW()) AS current_time')->current_time;
 
         $api_token_prefix = ApiTokenPrefix::create([
             'platform_name' => $platform_name,
             'prefix_token' => $prefix_token,
-            'created_at' => $current_time,
-            'updated_at' => $current_time,
+            'created_at' => DB::raw('FROM_UNIXTIME(' . $current_time . ')'),
+            'updated_at' => DB::raw('FROM_UNIXTIME(' . $current_time . ')'),
         ]);
 
-        // Viene usato created_at come parte dinamica del token
-        $dynamic_part = Carbon::parse($current_time)->timestamp; // parse in formato Unix
+        // Viene usato il timestamp Unix come parte dinamica del token
+        $dynamic_part = $current_time;
         $combined_token = $prefix_token . $dynamic_part;
         
         $this->info("API token for {$platform_name}: {$combined_token}");
