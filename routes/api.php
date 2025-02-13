@@ -9,6 +9,6 @@ use Illuminate\Support\Facades\Route;
 // Route::put('/contacts/{id}', [ContactController::class, 'update']); 
 // Route::delete('/contacts/{id}', [ContactController::class, 'destroy']); 
 
-Route::middleware([\App\Http\Middleware\AuthenticateWithPrefixToken::class])->group(function () {
+Route::middleware([\App\Http\Middleware\AuthenticateWithToken::class])->group(function () {
     Route::apiResource('contacts', ContactController::class);
 });
