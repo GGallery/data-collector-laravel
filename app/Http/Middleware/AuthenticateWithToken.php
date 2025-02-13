@@ -16,6 +16,7 @@ class AuthenticateWithToken
      */
     public function handle(Request $request, Closure $next)
     {
+        // Controlla se il token è presente
         $composed_token = $request->bearerToken();
 
         if (!$composed_token) {
@@ -28,7 +29,6 @@ class AuthenticateWithToken
 
         // Verifica se il prefisso esiste nel database
         $api_token_prefix = ApiTokenPrefix::where('prefix_token', $prefix_token)->first();
-
         if (!$api_token_prefix) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
