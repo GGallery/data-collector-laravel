@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\ApiTokenPrefix;
+use Illuminate\Support\Facades\Crypt;
 
 class AuthenticateWithToken
 {
@@ -16,9 +17,9 @@ class AuthenticateWithToken
      */
     public function handle(Request $request, Closure $next)
     {
-        // Controlla se il token è presente
         $composed_token = $request->bearerToken();
-
+        
+        // Controlla se il token è presente
         if (!$composed_token) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
