@@ -6,7 +6,6 @@ use Illuminate\Console\Command;
 use App\Models\ApiTokenPrefix;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class GenerateApiToken extends Command
 {
@@ -21,6 +20,7 @@ class GenerateApiToken extends Command
         // Ottiene l'orario corrente dal database mysql in formato Unix
         $current_time = DB::selectOne('SELECT UNIX_TIMESTAMP(NOW())')->{'UNIX_TIMESTAMP(NOW())'};
 
+
         ApiTokenPrefix::create([
             'platform_name' => $platform_name,
             'prefix_token' => $prefix_token,
@@ -31,7 +31,7 @@ class GenerateApiToken extends Command
         // Viene usato il timestamp Unix come parte dinamica del token
         $dynamic_part = $current_time;
         $combined_token = $prefix_token . $dynamic_part;
-        
+
         $this->info("API token for {$platform_name}: {$combined_token}");
     }
 }

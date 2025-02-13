@@ -17,13 +17,12 @@ class AuthenticateWithToken
     public function handle(Request $request, Closure $next)
     {
         $composed_token = $request->bearerToken();
-        // dd($prefixToken);
 
         if (!$composed_token) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        // Estrai il prefisso dal token
+        // Estrae il prefisso dal token
         $prefix_token = substr($composed_token, 0, 10);
         $dynamic_part = substr($composed_token, 10);
 
@@ -35,8 +34,8 @@ class AuthenticateWithToken
         }
 
         // Verifica la parte dinamica del token
-        $expected_dynamic_part = $api_token_prefix->created_at->format('YmdHis');
-        if ($dynamic_part !== $expected_dynamic_part) {
+        $expected_dynamic_part = $api_token_prefix->created_at->timestamp;
+        if ($dynamic_part != $expected_dynamic_part) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
