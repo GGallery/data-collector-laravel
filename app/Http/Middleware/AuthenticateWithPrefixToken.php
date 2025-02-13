@@ -16,10 +16,10 @@ class AuthenticateWithPrefixToken
      */
     public function handle(Request $request, Closure $next)
     {
-        $prefixToken = $request->bearerToken();
+        $prefix_token = $request->bearerToken();
         // dd($prefixToken);
 
-        if (!$prefixToken || !ApiTokenPrefix::where('prefix_token', $prefixToken)->exists()) {
+        if (!$prefix_token || !ApiTokenPrefix::where('prefix_token', $prefix_token)->exists()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
@@ -27,7 +27,7 @@ class AuthenticateWithPrefixToken
         $response = $next($request);
 
         // Aggiunge un header personalizzato alla risposta
-        $response->headers->set('Authorization', 'Bearer ' . $prefixToken);
+        $response->headers->set('Authorization', 'Bearer ' . $prefix_token);
 
         return $response;
     }

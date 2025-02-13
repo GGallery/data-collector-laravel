@@ -14,14 +14,14 @@ class GenerateApiTokenPrefix extends Command
 
     public function handle()
     {
-        $platformName = $this->argument('platform_name');
-        $prefixToken = Str::random(10);
+        $platform_name = $this->argument('platform_name');
+        $prefix_token = Str::random(10);
 
         ApiTokenPrefix::create([
-            'platform_name' => $platformName,
-            'prefix_token' => $prefixToken,
+            'platform_name' => $platform_name,
+            'prefix_token' => $prefix_token,
         ]);
 
-        $this->info("API token for {$platformName}: {$prefixToken}");
+        $this->info("API token for {$platform_name}: {$prefix_token}");
     }
 }
