@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\ApiTokenPrefix;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Crypt;
 
 class GenerateApiToken extends Command
 {
@@ -32,6 +33,9 @@ class GenerateApiToken extends Command
         $dynamic_part = $current_time;
         $combined_token = $prefix_token . $dynamic_part;
 
-        $this->info("API token for {$platform_name}: {$combined_token}");
+        // Cripta il token combinato
+        $encrypted_token = Crypt::encrypt($combined_token);
+
+        $this->info("API token for {$platform_name}: {$encrypted_token}");
     }
 }

@@ -17,10 +17,17 @@ class AuthenticateWithToken
      */
     public function handle(Request $request, Closure $next)
     {
-        $composed_token = $request->bearerToken();
+        $encrypted_token = $request->bearerToken();
         
         // Controlla se il token è presente
-        if (!$composed_token) {
+        if (!$encrypted_token) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        // Decripta il token
+        try {
+            $composed_token = Crypt::decrypt($encrypted_token);
+        } catch (\Exception $e) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
@@ -42,6 +49,8 @@ class AuthenticateWithToken
 
         // Passa la richiesta al prossimo middleware o controller
         $response = $next($request);
+        $response->headers->set('Authorization', 'Bearer ' . $composed_token);
+        // dd($response);
 
         // Aggiunge un header personalizzato alla risposta
         // $response->headers->set('Authorization', 'Bearer ' . $composed_token);
