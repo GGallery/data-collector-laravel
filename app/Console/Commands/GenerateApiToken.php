@@ -6,7 +6,9 @@ use Illuminate\Console\Command;
 use App\Models\ApiTokenPrefix;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Crypt;
+// use Illuminate\Support\Facades\Crypt;
+
+require_once app_path('Helpers/EncryptionHelper.php');
 
 class GenerateApiToken extends Command
 {
@@ -34,7 +36,9 @@ class GenerateApiToken extends Command
         $combined_token = $prefix_token . $dynamic_part;
 
         // Cripta il token combinato
-        $encrypted_token = Crypt::encrypt($combined_token);
+        $secret_key = env('SECRET_KEY');
+        $secret_iv = env('SECRET_IV');
+        $encrypted_token = \App\Helpers\EncryptionHelper::encryptDecrypt($combined_token, $secret_key, $secret_iv, 'encrypt');
 
         $this->info("API token for {$platform_name}: {$encrypted_token}");
     }

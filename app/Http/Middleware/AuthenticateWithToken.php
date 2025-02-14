@@ -6,7 +6,9 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\ApiTokenPrefix;
-use Illuminate\Support\Facades\Crypt;
+// use Illuminate\Support\Facades\Crypt;
+
+require_once app_path('Helpers/EncryptionHelper.php');
 
 class AuthenticateWithToken
 {
@@ -17,7 +19,7 @@ class AuthenticateWithToken
      */
     public function handle(Request $request, Closure $next)
     {
-        $encrypted_token = $request->bearerToken();
+        $encrypted_token = $request->bearerToken(); //si aspetta il token completo...
         
         // Controlla se il token è presente
         if (!$encrypted_token) {
@@ -25,8 +27,10 @@ class AuthenticateWithToken
         }
 
         // Decripta il token
+        $secret_key = env('SECRET_KEY');
+        $secret_iv = env('SECRET_IV');
         try {
-            $composed_token = Crypt::decrypt($encrypted_token);
+            $composed_token = \App\Helpers\EncryptionHelper::encryptDecrypt($encrypted_token, $secret_key, $secret_iv, 'decrypt');
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
@@ -49,11 +53,8 @@ class AuthenticateWithToken
 
         // Passa la richiesta al prossimo middleware o controller
         $response = $next($request);
-        $response->headers->set('Authorization', 'Bearer ' . $composed_token);
-        // dd($response);
-
-        // Aggiunge un header personalizzato alla risposta
         // $response->headers->set('Authorization', 'Bearer ' . $composed_token);
+        // dd($response);
 
         return $response;
     }
