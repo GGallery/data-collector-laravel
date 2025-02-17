@@ -36,9 +36,9 @@ class AuthenticateWithToken
             return response()->json(['message' => 'Token decryption fallita'], 401);
         }
 
-        // Estrae il prefisso dal token
+        // Estrae il prefisso dal token ricevuto
         $prefix_token = substr($composed_token, 0, 10);
-        // dd($prefix_token);
+        // Estrae la parte dinamica (timestamp) dal token ricevuto
         $dynamic_part = substr($composed_token, 10);
         // dd($dynamic_part);
 
@@ -48,10 +48,11 @@ class AuthenticateWithToken
             return response()->json(['message' => 'Prefix token not found'], 401);
         }
 
-        // Verifica la parte dinamica del token con una finestra di tempo
+        // Ottiene il timestamp di creazione del token dal database
         $expected_dynamic_part = $api_token_prefix->created_at->timestamp;
-        $time_window = 604800; // 1 settimana di validità per motivi di test
+        $time_window = 604800; // 1 settimana di validità solo per test
 
+        // Confronta la differenza tra il timestamp del token ricevuto e quello salvato nel database
         if (abs($dynamic_part - $expected_dynamic_part) > $time_window) {
             return response()->json(['message' => 'Token expired or invalid'], 401);
         }
