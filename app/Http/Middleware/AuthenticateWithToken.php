@@ -19,36 +19,38 @@ class AuthenticateWithToken
      */
     public function handle(Request $request, Closure $next)
     {
-        $encrypted_token = $request->bearerToken(); //si aspetta il token completo...
+        $encrypted_token = $request->bearerToken(); //si aspetta il token completo
         
         // Controlla se il token è presente
         if (!$encrypted_token) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'Token non fornito'], 401);
         }
 
         // Decripta il token
         $secret_key = env('SECRET_KEY');
         $secret_iv = env('SECRET_IV');
+        // dd($secret_key, $secret_iv);
         try {
             $composed_token = \App\Helpers\EncryptionHelper::encryptDecrypt($encrypted_token, $secret_key, $secret_iv, 'decrypt');
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'Token decryption fallita'], 401);
         }
 
         // Estrae il prefisso dal token
         $prefix_token = substr($composed_token, 0, 10);
+        // dd($prefix_token);
         $dynamic_part = substr($composed_token, 10);
 
         // Verifica se il prefisso esiste nel database
         $api_token_prefix = ApiTokenPrefix::where('prefix_token', $prefix_token)->first();
         if (!$api_token_prefix) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'Prefix token not found'], 401);
         }
 
         // Verifica la parte dinamica del token
         $expected_dynamic_part = $api_token_prefix->created_at->timestamp;
         if ($dynamic_part != $expected_dynamic_part) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'Dynamic part mismatch'], 401);
         }
 
         // Passa la richiesta al prossimo middleware o controller
