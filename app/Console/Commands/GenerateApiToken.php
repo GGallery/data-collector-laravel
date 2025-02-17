@@ -20,15 +20,15 @@ class GenerateApiToken extends Command
         $platform_name = $this->argument('platform_name');
         $prefix_token = Str::random(10);
 
-        // Ottiene l'orario corrente dal database mysql in formato Unix
-        $current_time = DB::selectOne('SELECT UNIX_TIMESTAMP(NOW())')->{'UNIX_TIMESTAMP(NOW())'};
+        // Ottiene il timestamp corrente
+        $current_time = time();
 
 
         ApiTokenPrefix::create([
             'platform_name' => $platform_name,
             'prefix_token' => $prefix_token,
-            'created_at' => DB::raw('FROM_UNIXTIME(' . $current_time . ')'),
-            'updated_at' => DB::raw('FROM_UNIXTIME(' . $current_time . ')'),
+            // 'created_at' => $current_time,
+            // 'updated_at' => $current_time
         ]);
 
         // Viene usato il timestamp Unix come parte dinamica del token
