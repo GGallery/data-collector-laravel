@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ContactExtraResource;
 use App\Models\ContactExtra;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+// use Illuminate\Support\Facades\Validator;
 
 
 class ContactExtraController extends Controller
@@ -24,18 +24,7 @@ class ContactExtraController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'cb_cognome' => 'required|string|max:255',
-            'cb_codicefiscale' => 'required|string|max:255',
-            'cb_datadinascita' => 'required|date',
-            'cb_luogodinascita' => 'required|string|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
-        }
-
-        $contactExtra = ContactExtra::create($validator->validated());
+        $contactExtra = ContactExtra::create($request->all());
         return new ContactExtraResource($contactExtra);
     }
 
@@ -64,18 +53,7 @@ class ContactExtraController extends Controller
             return response()->json(['message' => 'Contact extra not found'], 404);
         }
 
-        $validator = Validator::make($request->all(), [
-            'cb_cognome' => 'sometimes|required|string|max:255',
-            'cb_codicefiscale' => 'sometimes|required|string|max:255',
-            'cb_datadinascita' => 'sometimes|required|date',
-            'cb_luogodinascita' => 'sometimes|required|string|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
-        }
-
-        $contactExtra->update($validator->validated());
+        $contactExtra->update($request->all());
         return new ContactExtraResource($contactExtra);
     }
 

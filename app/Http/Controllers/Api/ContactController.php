@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ContactResource;
 use App\Models\Contact;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+// use Illuminate\Support\Facades\Validator;
 
 class ContactController extends Controller
 {
@@ -25,18 +25,7 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:contacts',
-            'password' => 'required|string|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
-        }
-
-        $contact = Contact::create($validator->validated());
+        $contact = Contact::create($request->all());
         return new ContactResource($contact);
     }
 
@@ -65,18 +54,7 @@ class ContactController extends Controller
             return response()->json(['message' => 'Contact not found'], 404);
         }
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|required|string|max:255',
-            'username' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|string|email|max:255|unique:contacts,email,' . $id,
-            'password' => 'sometimes|required|string|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
-        }
-
-        $contact->update($validator->validated());
+        $contact->update($request->all());
         return new ContactResource($contact);
     }
 
