@@ -27,9 +27,9 @@ class ContactController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:contacts',
-            'phone' => 'nullable|string|max:20',
-            'message' => 'nullable|string',
+            'password' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -67,9 +67,9 @@ class ContactController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|required|string|max:255',
+            'username' => 'sometimes|required|string|max:255',
             'email' => 'sometimes|required|string|email|max:255|unique:contacts,email,' . $id,
-            'phone' => 'nullable|string|max:20',
-            'message' => 'nullable|string',
+            'password' => 'sometimes|required|string|max:255',
         ]);
 
         if ($validator->fails()) {
