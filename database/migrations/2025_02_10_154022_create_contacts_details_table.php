@@ -16,7 +16,23 @@ return new class extends Migration
             $table->string('cb_cognome');
             $table->string('cb_codicefiscale')->unique();
             $table->date('cb_datadinascita');
-            $table->string('cb_luogodinascita');            
+            $table->string('cb_luogodinascita');      
+            $table->string('cb_provinciadinascita');
+            $table->string('cb_indirizzodiresidenza');
+            $table->string('cb_provdiresidenza')->nullable();
+            $table->string('cb_cap')->nullable();
+            $table->string('cb_telefono');
+            $table->string('cb_nome');
+            $table->string('cb_citta');
+            $table->string('cb_professionedisciplina')->nullable();
+            $table->string('cb_ordine')->nullable();
+            $table->string('cb_numeroiscrizione')->nullable();
+            $table->string('cb_reclutamento')->nullable();
+            $table->string('cb_codicereclutamento')->nullable();
+            $table->string('cb_professione')->nullable();
+            $table->string('cb_profiloprofessionale');
+            $table->string('cb_settore')->nullable();
+            $table->string('cb_societa');
             $table->timestamps();
         });
     }

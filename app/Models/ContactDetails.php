@@ -14,5 +14,21 @@ class ContactDetails extends Model
         'cb_codicefiscale',
         'cb_datadinascita',
         'cb_luogodinascita',
+        'cb_provinciadinascita', 
+        'cb_indirizzodiresidenza',
+        'cb_provdiresidenza',
+        'cb_cap',
+        'cb_telefono',
+        'cb_nome',
+        'cb_citta',
+        'cb_professionedisciplina', 
+        'cb_ordine',
+        'cb_numeroiscrizione',
+        'cb_reclutamento',
+        'cb_codicereclutamento', 
+        'cb_professione',
+        'cb_profiloprofessionale',
+        'cb_settore',
+        'cb_societa'
     ];
 }
