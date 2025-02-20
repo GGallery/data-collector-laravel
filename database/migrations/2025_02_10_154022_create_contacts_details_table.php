@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('contacts_extra', function (Blueprint $table) {
+        Schema::create('contacts_details', function (Blueprint $table) {
             $table->id();
             $table->string('cb_cognome');
             $table->string('cb_codicefiscale')->unique();
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('contacts_extra');
+        Schema::dropIfExists('contacts_details');
     }
 };

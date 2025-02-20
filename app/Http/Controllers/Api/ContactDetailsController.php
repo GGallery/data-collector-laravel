@@ -1,0 +1,74 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Http\Resources\ContactDetailsResource;
+use App\Models\ContactDetails;
+use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Validator;
+
+
+class ContactDetailsController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        return ContactDetailsResource::collection(ContactDetails::all());
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $contactDetails = ContactDetails::create($request->all());
+        return new ContactDetailsResource($contactDetails);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        $contactDetails = ContactDetails::find($id);
+
+        if (!$contactDetails) {
+            return response()->json(['message' => 'Contact details not found'], 404);
+        }
+
+        return new ContactDetailsResource($contactDetails);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        $contactDetails = ContactDetails::find($id);
+
+        if (!$contactDetails) {
+            return response()->json(['message' => 'Contact details not found'], 404);
+        }
+
+        $contactDetails->update($request->all());
+        return new ContactDetailsResource($contactDetails);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        $contactDetails = ContactDetails::find($id);
+
+        if (!$contactDetails) {
+            return response()->json(['message' => 'Contact details not found'], 404);
+        }
+
+        $contactDetails->delete();
+        return response()->json(null, 204);
+    }
+}

@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\ContactController;
-use App\Http\Controllers\Api\ContactExtraController;
+use App\Http\Controllers\Api\ContactDetailsController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/contacts', [ContactController::class, 'index']); 
@@ -12,5 +12,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware([\App\Http\Middleware\AuthenticateWithToken::class])->group(function () {
     Route::apiResource('contacts', ContactController::class);
-    Route::apiResource('contacts_extra', ContactExtraController::class);
+    Route::apiResource('contacts_details', ContactDetailsController::class);
 });
