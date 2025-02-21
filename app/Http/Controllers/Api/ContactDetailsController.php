@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ContactDetailsResource;
+use App\Models\ApiTokenPrefix;
 use App\Models\ContactDetails;
 use Illuminate\Http\Request;
 // use Illuminate\Support\Facades\Validator;
+use App\Models\SystemLog;
 
 
 class ContactDetailsController extends Controller
@@ -24,8 +26,32 @@ class ContactDetailsController extends Controller
      */
     public function store(Request $request)
     {
-        $contactDetails = ContactDetails::create($request->all());
-        return new ContactDetailsResource($contactDetails);
+        try {
+            $contactDetails = ContactDetails::create($request->all());
+            return new ContactDetailsResource($contactDetails);
+        } catch (\Exception $e) {
+            $this->logError(__FILE__, __FUNCTION__, $e->getMessage(), $request);
+            return response()->json(['message' => 'Error storing contact details'], 500);
+        }
+    }
+
+    protected function logError($file, $function_name, $message, $request)
+    {
+        $platform_name = 'Unknown'; // Valore default
+    
+        // Recupera platform_name da api_tokens_prefixes, se disponibile
+        $api_token_prefix = ApiTokenPrefix::where('prefix_token', $request->bearerToken())->first();
+        if ($api_token_prefix) {
+            $platform_name = $api_token_prefix->platform_name;
+        }
+    
+        SystemLog::create([
+            'file' => $file,
+            'platform_name' => $platform_name,
+            'function_name' => $function_name,
+            'message' => $message,
+            'email' => $request->input('email'),
+        ]);
     }
 
     /**

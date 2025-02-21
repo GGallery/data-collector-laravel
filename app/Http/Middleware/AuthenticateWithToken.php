@@ -6,6 +6,8 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\ApiTokenPrefix;
+use App\Models\SystemLog;
+use Exception;
 // use Illuminate\Support\Facades\Crypt;
 
 require_once app_path('Helpers/EncryptionHelper.php');
@@ -23,6 +25,7 @@ class AuthenticateWithToken
         
         // Controlla se il token è presente
         if (!$encrypted_token) {
+            $this->logError(__FILE__, 'AuthenticateWithToken', 'Token non fornito');
             return response()->json(['message' => 'Token non fornito'], 401);
         }
 
@@ -32,7 +35,8 @@ class AuthenticateWithToken
         // dd($secret_key, $secret_iv);
         try {
             $composed_token = \App\Helpers\EncryptionHelper::encryptDecrypt($encrypted_token, $secret_key, $secret_iv, 'decrypt');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            $this->logError(__FILE__, 'AuthenticateWithToken', 'Token decryption fallita: ' . $e->getMessage());
             return response()->json(['message' => 'Token decryption fallita'], 401);
         }
 
@@ -45,6 +49,7 @@ class AuthenticateWithToken
         // Verifica se il prefisso esiste nel database
         $api_token_prefix = ApiTokenPrefix::where('prefix_token', $prefix_token)->first();
         if (!$api_token_prefix) {
+            $this->logError(__FILE__, 'AuthenticateWithToken', 'Prefix token not found');
             return response()->json(['message' => 'Prefix token not found'], 401);
         }
 
@@ -54,6 +59,7 @@ class AuthenticateWithToken
 
         // Confronta la differenza tra il timestamp del token ricevuto e quello salvato nel database
         if (abs($dynamic_part - $expected_dynamic_part) > $time_window) {
+            $this->logError(__FILE__, 'AuthenticateWithToken', 'Token expired or invalid');            
             return response()->json(['message' => 'Token expired or invalid'], 401);
         }
 
@@ -64,4 +70,26 @@ class AuthenticateWithToken
 
         return $response;
     }
+
+    protected function logError($file, $function_name, $message)
+    {
+        $platform_name = 'Unknown'; // Valore default
+
+        // Recupera platform_name da api_tokens_prefixes, se disponibile
+        if (auth()->check()) {
+            $user = auth()->user();
+            $api_token_prefix = ApiTokenPrefix::where('prefix_token', $user->prefix_token)->first();
+            if ($api_token_prefix) {
+                $platform_name = $api_token_prefix->platform_name;
+            }
+        }
+
+        SystemLog::create([
+            'file' => $file,
+            'platform_name' => $platform_name,
+            'function_name' => $function_name,
+            'message' => $message,
+        ]);
+    }
+
 }
