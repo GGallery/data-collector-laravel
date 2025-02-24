@@ -17,41 +17,55 @@ trait LogErrorTrait
 
         // Prende il bearer token da request per identificazione della piattaforma
         $bearer_token = $request ? $request->bearerToken() : request()->bearerToken();
-        // Array delle informazioni di debug
-        $debug_info['bearer_token'] = $bearer_token;
 
         if ($bearer_token) {
             try {
                 // Decritta il token
                 $decrypted_token = \App\Helpers\EncryptionHelper::encryptDecrypt($bearer_token, env('SECRET_KEY'), env('SECRET_IV'), 'decrypt');
-                $debug_info['decrypted_token'] = $decrypted_token;
 
                 // Dal token estrae il prefisso
                 $prefix_token = substr($decrypted_token, 0, 10);
-                $debug_info['prefix_token'] = $prefix_token;
                 
                 // Con il prefisso estratto cerca il record corrispondente sul db
                 $api_token_prefix = ApiTokenPrefix::where('prefix_token', $prefix_token)->first();
-                $debug_info['api_token_prefix'] = $api_token_prefix;
                 
                 if ($api_token_prefix) {
                     // Se lo trova viene associato alla variabile
                     $platform_name = $api_token_prefix->platform_name;
                 }
             } catch (Exception $e) {
-                $debug_info['error'] = $e->getMessage();
+                $debug_info['token_error'] = $e->getMessage();
             }
         }
 
-        // Aggiunge le informazioni di debug al messaggio
-        $debug_message = $message . "\nDebug Info: " . json_encode($debug_info);
+        // Recupera o inizializza l'array degli errori dalla sessione
+        $errors = session('log_errors', []);
+
+        // Aggiunge il nuovo errore
+        $errors[] = [
+            'timestamp' => now()->format('Y-m-d H:i:s'),
+            'type' => 'server',
+            'context' => [
+                'file' => $file,
+                'function' => $function_name,
+                'email' => $request ? $request->input('email') : null
+            ],
+            'error' => [
+                'message' => $message,
+                'debug_info' => $debug_info,
+                'trace' => array_slice(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), 0, 5)
+            ]
+        ];
+
+        // Salva l'array aggiornato nella sessione
+        session(['log_errors' => $errors]);
 
         // Crea un record nel db con le informazioni di log
         SystemLog::create([
             'file' => $file,
             'platform_name' => $platform_name,
             'function_name' => $function_name,
-            'message' => $debug_message,
+            'message' => json_encode(['errors' => $errors], JSON_PRETTY_PRINT),
             'email' => $request ? $request->input('email') : null
         ]);
     }
