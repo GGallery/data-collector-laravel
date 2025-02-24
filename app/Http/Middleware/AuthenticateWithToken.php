@@ -74,21 +74,40 @@ class AuthenticateWithToken
     protected function logError($file, $function_name, $message)
     {
         $platform_name = 'Unknown'; // Valore default
+        $debug_info = [];
+        //forse da cancellare
 
         // Recupera platform_name da api_tokens_prefixes, se disponibile
-        if (auth()->check()) {
-            $user = auth()->user();
-            $api_token_prefix = ApiTokenPrefix::where('prefix_token', $user->prefix_token)->first();
-            if ($api_token_prefix) {
-                $platform_name = $api_token_prefix->platform_name;
+        $bearer_token = request()->bearerToken();
+        $debug_info['bearer_token'] = $bearer_token;
+
+        if ($bearer_token) {
+            try {
+                $decrypted_token = \App\Helpers\EncryptionHelper::encryptDecrypt($bearer_token, env('SECRET_KEY'), env('SECRET_IV'), 'decrypt');
+                $debug_info['decrypted_token'] = $decrypted_token;
+                
+                $prefix_token = substr($decrypted_token, 0, 10);
+                $debug_info['prefix_token'] = $prefix_token;
+                
+                $api_token_prefix = ApiTokenPrefix::where('prefix_token', $prefix_token)->first();
+                $debug_info['api_token_prefix'] = $api_token_prefix;
+                
+                if ($api_token_prefix) {
+                    $platform_name = $api_token_prefix->platform_name;
+                }
+            } catch (Exception $e) {
+                $debug_info['error'] = $e->getMessage();
             }
         }
 
+        // Aggiungi le informazioni di debug al messaggio
+        $debug_message = $message . "\nDebug Info: " . json_encode($debug_info);
+        
         SystemLog::create([
             'file' => $file,
             'platform_name' => $platform_name,
             'function_name' => $function_name,
-            'message' => $message,
+            'message' => $debug_message,
         ]);
     }
 
