@@ -38,7 +38,7 @@ php artisan make:resource ContactResource
 
 php artisan make:controller Api\ContactController --api
 
-php artisan install:api per Laravel 11 <br><br>
+php artisan install:api per Laravel 11
 
 
 php artisan make:command GenerateApiToken
