@@ -36,7 +36,7 @@ class ContactController extends Controller
             $contact = Contact::create($request->all());
             return new ContactResource($contact);
         } catch (Exception $e) {
-            $this->logError(__FILE__, __FUNCTION__, $e->getMessage(), $request);
+            // $this->logError(__FILE__, __FUNCTION__, $e->getMessage(), $request);
             return response()->json([
                 'message' => 'Error storing contact',
                 'debug_info' => $e->getMessage()
