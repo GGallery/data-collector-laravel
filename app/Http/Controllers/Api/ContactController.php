@@ -11,6 +11,7 @@ use Exception;
 use Illuminate\Http\Request;
 // use Illuminate\Support\Facades\Validator;
 use App\Traits\LogErrorTrait;
+use Illuminate\Support\Facades\DB;
 
 
 class ContactController extends Controller
@@ -33,8 +34,18 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         try {
-            $contact = Contact::create($request->all());
-            return new ContactResource($contact);
+            // DB::raw per filtrare e ordinare i contatti
+            $contacts = DB::table('contacts')
+                ->select(DB::raw('*'))
+                ->whereBetween('lastupdatedate', [$request->startDate, $request->endDate])
+                ->orderBy('lastupdatedate', 'desc')
+                ->get();
+
+            foreach ($contacts as $contact) {
+                Contact::create((array) $contact);
+            }
+
+            return response()->json(['message' => 'Contacts stored successfully'], 200);
         } catch (Exception $e) {
             // $this->logError(__FILE__, __FUNCTION__, $e->getMessage(), $request);
             return response()->json([
