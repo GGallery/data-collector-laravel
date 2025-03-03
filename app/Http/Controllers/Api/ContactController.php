@@ -11,6 +11,7 @@ use Exception;
 use Illuminate\Http\Request;
 // use Illuminate\Support\Facades\Validator;
 use App\Traits\LogErrorTrait;
+use Illuminate\Support\Facades\DB;
 
 
 class ContactController extends Controller
@@ -33,18 +34,68 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         try {
+            // Controlla se è un batch di contatti
+            if ($request->has('contacts') && is_array($request->contacts)) {
+                return $this->storeBatch($request);
+            }
+            
+            
+            // Elaborazione di un singolo contatto
             $contact = Contact::create($request->all());
             return new ContactResource($contact);
         } catch (Exception $e) {
-            // $this->logError(__FILE__, __FUNCTION__, $e->getMessage(), $request);
+            // Log dell'errore fuori dalla transazione
+            $this->logError(__FILE__, __FUNCTION__, $e->getMessage(), $request);
+            
             return response()->json([
                 'message' => 'Error storing contact',
                 'debug_info' => $e->getMessage()
             ], 500);
-
         }
     }
 
+
+    /**
+     * Store contatti multipli in batch.
+     */
+    protected function storeBatch(Request $request)
+    {
+        $insertedContacts = [];
+        
+        try {
+            // Inizia la transazione
+            DB::beginTransaction();
+            
+            foreach ($request->contacts as $contactData) {
+                // Cerca se il contatto esiste già
+                $contact = Contact::firstOrNew(['email' => $contactData['email']]);
+                
+                if (!$contact->exists) {
+                    // Imposta solo i campi che sono forniti
+                    $contact->fill(array_filter($contactData));
+                    $contact->save();
+                }
+                
+                $insertedContacts[] = $contact;
+            }
+            
+            // Commit della transazione
+            DB::commit();
+            
+            return ContactResource::collection(collect($insertedContacts));
+        } catch (Exception $e) {
+            // Rollback della transazione
+            DB::rollBack();
+            
+            // Log dell'errore fuori dalla transazione
+            $this->logError(__FILE__, 'storeBatch', $e->getMessage(), $request);
+            
+            return response()->json([
+                'message' => 'Error storing contacts batch',
+                'debug_info' => $e->getMessage()
+            ], 500);
+        }
+    }    
 
 
     /**

@@ -10,6 +10,7 @@ class ContactDetails extends Model
     protected $table = 'contacts_details';
     
     protected $fillable = [
+        'contact_id',
         'cb_cognome',
         'cb_codicefiscale',
         'cb_datadinascita',
@@ -31,4 +32,21 @@ class ContactDetails extends Model
         'cb_settore',
         'cb_societa'
     ];
+
+    /**
+     * I tipi degli attributi.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'cb_datadinascita' => 'date',
+    ];
+
+    /**
+     * Il contatto associato a questi dettagli.
+     */
+    public function contact()
+    {
+        return $this->belongsTo(Contact::class);
+    }    
 }
