@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
 
 class Contact extends Model
 {
@@ -18,4 +20,8 @@ class Contact extends Model
     //     'username' => '',
     //     'password' => '',
     // ];
+
+    public function contactDetails(): HasOne {
+        return $this->hasOne(ContactDetails::class);
+    }
 }

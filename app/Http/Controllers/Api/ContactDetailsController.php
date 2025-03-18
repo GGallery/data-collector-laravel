@@ -33,7 +33,21 @@ class ContactDetailsController extends Controller
     public function store(Request $request)
     {
         try {
-            $contactDetails = ContactDetails::create($request->all());
+            // Cerca il contatto associato usando l'email
+            $contact = \App\Models\Contact::where('email', $request->input('email'))->first();
+            
+            if (!$contact) {
+                return response()->json([
+                    'message' => 'Contact not found for the provided email',
+                    'email' => $request->input('email')
+                ], 404);
+            }
+            
+            // Prepara i dati per i dettagli del contatto
+            $data = $request->except('email');
+            $data['contact_id'] = $contact->id;
+
+            $contactDetails = ContactDetails::create($data);
             return new ContactDetailsResource($contactDetails);
         } catch (Exception $e) {
             // Chiama la funzione logError

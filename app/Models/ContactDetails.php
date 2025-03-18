@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ContactDetails extends Model
 {
@@ -10,6 +11,7 @@ class ContactDetails extends Model
     protected $table = 'contacts_details';
     
     protected $fillable = [
+        'contact_id',
         'cb_cognome',
         'cb_codicefiscale',
         'cb_datadinascita',
@@ -31,4 +33,11 @@ class ContactDetails extends Model
         'cb_settore',
         'cb_societa'
     ];
+
+
+
+    public function contact(): BelongsTo {
+        return $this->belongsTo(Contact::class);
+    }
+
 }
