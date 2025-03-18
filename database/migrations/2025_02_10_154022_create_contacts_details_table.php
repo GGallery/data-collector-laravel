@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('contacts_details', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('contact_id');
             $table->string('cb_cognome');
             $table->string('cb_codicefiscale')->unique();
             $table->date('cb_datadinascita');
@@ -35,12 +34,6 @@ return new class extends Migration
             $table->string('cb_settore')->nullable();
             $table->string('cb_societa');
             $table->timestamps();
-
-            // Aggiungi la foreign key
-            $table->foreign('contact_id')
-            ->references('id')
-            ->on('contacts')
-            ->onDelete('cascade');
         });
     }
 
