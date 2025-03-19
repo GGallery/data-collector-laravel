@@ -11,4 +11,20 @@ class ApiTokenPrefix extends Model
         'platform_name',
         'prefix_token',
     ];
+
+    /**
+     * Relazione con i puntatori di sincronizzazione
+     */
+    public function syncPointers()
+    {
+        return $this->hasMany(SyncPointer::class, 'platform_prefix', 'prefix_token');
+    }
+
+    /**
+     * Ottiene l'ultimo puntatore di sincronizzazione
+     */
+    public function getLastSyncPointer()
+    {
+        return $this->syncPointers()->latest('updated_at')->first();
+    }
 }
