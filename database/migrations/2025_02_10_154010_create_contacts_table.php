@@ -15,9 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->string('username')->nullable();
-            $table->string('email')->unique();
+            $table->string('email');
+            $table->string('platform_prefix');
             $table->string('password')->nullable();
             $table->timestamps();
+
+            // Creazione di un indice univoco composto da email e platform_prefix
+            $table->unique(['email', 'platform_prefix']);            
         });
     }
 

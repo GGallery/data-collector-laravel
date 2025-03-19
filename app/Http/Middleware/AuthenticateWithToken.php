@@ -57,6 +57,9 @@ class AuthenticateWithToken
             return response()->json(['message' => 'Prefix token not found'], 401);
         }
 
+        // Aggiunge platform_prefix alla richiesta
+        $request->merge(['platform_prefix' => $prefix_token]);        
+
         // Ottiene il timestamp di creazione del token dal database
         $expected_dynamic_part = $api_token_prefix->created_at->timestamp;
         $time_window = 604800; // 1 settimana di validità solo per test

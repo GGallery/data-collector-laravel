@@ -12,6 +12,7 @@ class Contact extends Model
         'name',
         'username',
         'email',
+        'platform_prefix',
         'password',
     ];
 

@@ -33,13 +33,16 @@ class ContactDetailsController extends Controller
     public function store(Request $request)
     {
         try {
-            // Cerca il contatto associato usando l'email
-            $contact = \App\Models\Contact::where('email', $request->input('email'))->first();
+            // Cerca il contatto associato usando l'email e platform_prefix
+            $contact = \App\Models\Contact::where('email', $request->input('email'))
+                                        ->where('platform_prefix', $request->input('platform_prefix'))
+                                        ->first();
             
             if (!$contact) {
                 return response()->json([
-                    'message' => 'Contact not found for the provided email',
-                    'email' => $request->input('email')
+                    'message' => 'Contact not found for the provided email and platform',
+                    'email' => $request->input('email'),
+                    'platform_prefix' => $request->input('platform_prefix')
                 ], 404);
             }
             
