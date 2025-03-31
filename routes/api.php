@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\ContactDetailsController;
+use App\Http\Controllers\Api\SyncPointersController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/contacts', [ContactController::class, 'index']); 
@@ -13,5 +14,5 @@ use Illuminate\Support\Facades\Route;
 Route::middleware([\App\Http\Middleware\AuthenticateWithToken::class])->group(function () {
     Route::apiResource('contacts', ContactController::class);
     Route::apiResource('contacts_details', ContactDetailsController::class);
-    
+    Route::apiResource('sync_pointers', SyncPointersController::class);
 });

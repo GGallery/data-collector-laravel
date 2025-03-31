@@ -18,6 +18,9 @@ class SyncPointer extends Model
         'platform_prefix',
         'last_id_processed',
         'last_sync_date',
+        'processed_records',
+        'success_count',
+        'error_count'        
     ];
 
     /**

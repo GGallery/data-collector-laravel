@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('platform_prefix', 32);
             $table->unsignedBigInteger('last_id_processed')->default(0);
             $table->timestamp('last_sync_date')->nullable();
+            $table->unsignedInteger('processed_records')->default(0);
+            $table->unsignedInteger('success_count')->default(0);
+            $table->unsignedInteger('error_count')->default(0);            
             $table->timestamps();
 
             // Chiave esterna verso api_tokens_prefixes
