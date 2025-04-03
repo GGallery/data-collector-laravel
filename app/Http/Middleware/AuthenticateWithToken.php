@@ -13,8 +13,6 @@ use App\Traits\LogErrorTrait;
 use App\Helpers\EncryptionHelper;
 
 
-require_once app_path('Helpers/EncryptionHelper.php');
-
 class AuthenticateWithToken
 {
 
