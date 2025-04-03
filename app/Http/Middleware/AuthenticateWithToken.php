@@ -38,16 +38,16 @@ class AuthenticateWithToken
         $secret_iv = env('SECRET_IV');
         // dd($secret_key, $secret_iv);
         try {
-            $composed_token = EncryptionHelper::encryptDecrypt($encrypted_token, $secret_key, $secret_iv, 'decrypt');
+            $decrypted_token = EncryptionHelper::encryptDecrypt($encrypted_token, $secret_key, $secret_iv, 'decrypt');
         } catch (Exception $e) {
             $this->logError(__FILE__, 'AuthenticateWithToken', 'Token decryption fallita: ' . $e->getMessage());
             return response()->json(['message' => 'Token decryption fallita'], 401);
         }
 
         // Estrae il prefisso dal token ricevuto
-        $prefix_token = substr($composed_token, 0, 10);
+        $prefix_token = substr($decrypted_token, 0, 10);
         // Estrae la parte dinamica (timestamp) dal token ricevuto
-        $dynamic_part = substr($composed_token, 10);
+        $dynamic_part = substr($decrypted_token, 10);
         // dd($dynamic_part);
 
         // Verifica se il prefisso esiste nel database
@@ -72,7 +72,7 @@ class AuthenticateWithToken
 
         // Passa la richiesta al prossimo middleware o controller
         $response = $next($request);
-        // $response->headers->set('Authorization', 'Bearer ' . $composed_token);
+        // $response->headers->set('Authorization', 'Bearer ' . $decrypted_token);
         // dd($response);
 
         return $response;
