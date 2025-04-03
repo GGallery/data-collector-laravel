@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Models\SystemLog;
 use App\Models\ApiTokenPrefix;
+use App\Helpers\EncryptionHelper;
 use Exception;
 
 //Funzione custom per i log errors con l'identificazione della piattaforma
@@ -21,7 +22,7 @@ trait LogErrorTrait
         if ($bearer_token) {
             try {
                 // Decritta il token
-                $decrypted_token = \App\Helpers\EncryptionHelper::encryptDecrypt($bearer_token, env('SECRET_KEY'), env('SECRET_IV'), 'decrypt');
+                $decrypted_token = EncryptionHelper::encryptDecrypt($bearer_token, env('SECRET_KEY'), env('SECRET_IV'), 'decrypt');
 
                 // Dal token estrae il prefisso
                 $prefix_token = substr($decrypted_token, 0, 10);

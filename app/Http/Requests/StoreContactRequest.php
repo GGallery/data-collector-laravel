@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class StoreContactRequest extends FormRequest
@@ -22,6 +23,25 @@ class StoreContactRequest extends FormRequest
      */
     public function rules(): array
     {
+        /* Debug */
+        /* 
+        $rule = Rule::unique('contacts', 'email')
+        ->where(function ($query) {
+            
+            return $query->where('platform_prefix', $this->input('platform_prefix'));
+        });
+        
+        Per vedere la query SQL generata
+         
+        $validator = Validator::make(
+            ['email' => $this->input('email')], 
+            ['email' => $rule]
+        );
+        
+        dd($validator->messages());
+        */
+        
+
         return [
             'name' => 'nullable|string|max:255',
             'username' => 'nullable|string|max:255',

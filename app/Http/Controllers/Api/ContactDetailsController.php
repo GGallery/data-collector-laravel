@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ContactDetailsResource;
 use App\Models\ApiTokenPrefix;
+use App\Models\Contact;
 use App\Models\ContactDetails;
 use Illuminate\Http\Request;
 // use Illuminate\Support\Facades\Validator;
@@ -18,6 +19,7 @@ class ContactDetailsController extends Controller
 {
 
     use LogErrorTrait;
+
 
     /**
      * Display a listing of the resource.
@@ -33,8 +35,12 @@ class ContactDetailsController extends Controller
     public function store(Request $request)
     {
         try {
-            // Cerca il contatto associato usando l'email e platform_prefix
-            $contact = \App\Models\Contact::where('email', $request->input('email'))
+
+            // Debug
+            // dd($request);
+
+            // Cerca il contatto in tabella `contacts` associato usando l'email e platform_prefix
+            $contact = Contact::where('email', $request->input('email'))
                                         ->where('platform_prefix', $request->input('platform_prefix'))
                                         ->first();
             
