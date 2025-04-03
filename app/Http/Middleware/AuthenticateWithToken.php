@@ -10,6 +10,8 @@ use App\Models\SystemLog;
 use Exception;
 // use Illuminate\Support\Facades\Crypt;
 use App\Traits\LogErrorTrait;
+use App\Helpers\EncryptionHelper;
+
 
 require_once app_path('Helpers/EncryptionHelper.php');
 
@@ -38,7 +40,7 @@ class AuthenticateWithToken
         $secret_iv = env('SECRET_IV');
         // dd($secret_key, $secret_iv);
         try {
-            $composed_token = \App\Helpers\EncryptionHelper::encryptDecrypt($encrypted_token, $secret_key, $secret_iv, 'decrypt');
+            $composed_token = EncryptionHelper::encryptDecrypt($encrypted_token, $secret_key, $secret_iv, 'decrypt');
         } catch (Exception $e) {
             $this->logError(__FILE__, 'AuthenticateWithToken', 'Token decryption fallita: ' . $e->getMessage());
             return response()->json(['message' => 'Token decryption fallita'], 401);

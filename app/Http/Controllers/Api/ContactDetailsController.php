@@ -56,8 +56,8 @@ class ContactDetailsController extends Controller
             $data = $request->except('email');
             $data['contact_id'] = $contact->id;
 
-            $contactDetails = ContactDetails::create($data);
-            return new ContactDetailsResource($contactDetails);
+            $contactDetails = ContactDetails::create($data); // crea il record 
+            return new ContactDetailsResource($contactDetails); // ritorna response JSON
         } catch (Exception $e) {
             // Chiama la funzione logError
             $this->logError(__FILE__, __FUNCTION__, $e->getMessage(), $request);

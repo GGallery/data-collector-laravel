@@ -45,8 +45,8 @@ class ContactController extends Controller
             }
 
             // Crea un nuovo contatto
-            $contact = Contact::create($request->validated());
-            return new ContactResource($contact);
+            $contact = Contact::create($request->validated()); // crea il record 
+            return new ContactResource($contact); // ritorna response JSON
         } catch (Exception $e) {
             // $this->logError(__FILE__, __FUNCTION__, $e->getMessage(), $request);
             return response()->json([
