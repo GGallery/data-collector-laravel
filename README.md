@@ -45,7 +45,7 @@ php artisan make:command GenerateApiToken
 
 php artisan make:middleware AuthenticateWithToken
 
-php artisan generate:api-token-prefix "PlatformName" (generato da make:command)
+php artisan generate:api-token "PlatformName" (generato da make:command)
 ```
 
 <br>
