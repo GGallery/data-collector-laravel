@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('contact_id');
             $table->string('cb_cognome');
+            $table->string('cb_nome');
             $table->string('cb_codicefiscale')->unique();
             $table->date('cb_datadinascita');
             $table->string('cb_luogodinascita');      
@@ -23,7 +24,6 @@ return new class extends Migration
             $table->string('cb_provdiresidenza')->nullable();
             $table->string('cb_cap')->nullable();
             $table->string('cb_telefono');
-            $table->string('cb_nome');
             $table->string('cb_citta');
             $table->string('cb_professionedisciplina')->nullable();
             $table->string('cb_ordine')->nullable();
