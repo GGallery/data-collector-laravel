@@ -23,7 +23,7 @@ class AuthenticateWithToken
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         $encrypted_token = $request->bearerToken(); //si aspetta il token completo
         
